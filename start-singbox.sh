@@ -789,50 +789,47 @@ EOF
 
 # 显示使用说明
 show_usage() {
-    cat <<EOF
-
-${GREEN}========================================
-🎉 sing-box 代理部署成功！
-========================================${NC}
-
-${BLUE}📍 代理地址:${NC}
-  Mixed:  127.0.0.1:$MIXED_PORT (推荐)
-  SOCKS5: 127.0.0.1:$SOCKS_PORT
-  HTTP:   127.0.0.1:$HTTP_PORT
-
-${BLUE}📝 使用方法:${NC}
-
-  设置系统环境变量即可使用代理:
-  ${YELLOW}source $SCRIPT_DIR/proxy_env.sh${NC}
-
-  设置后，所有支持 HTTP/HTTPS/SOCKS5 代理的工具（git、pip、wget、curl 等）
-  都会自动使用代理，无需额外配置。
-
-${BLUE}⚡ 快捷命令:${NC}
-  ${YELLOW}proxy status${NC}      查看代理状态
-  ${YELLOW}proxy on${NC}          启用代理环境变量
-  ${YELLOW}proxy off${NC}         禁用代理环境变量
-  ${YELLOW}proxy shutdown${NC}    关闭并清理代理
-
-  ${YELLOW}提示:${NC} 如果 proxy 命令不可用，请先运行:
-  ${YELLOW}export PATH="\$HOME/bin:\$PATH"${NC}
-
-${BLUE}🔧 管理命令:${NC}
-  停止代理: ${YELLOW}$SCRIPT_DIR/stop.sh${NC}
-  查看日志: ${YELLOW}tail -f $LOG_DIR/singbox.log${NC}
-  重启代理: ${YELLOW}$SCRIPT_DIR/stop.sh && $0 $SUBSCRIBE_URL${NC}
-
-${BLUE}📊 服务状态:${NC}
-  sing-box PID: $(cat "$SCRIPT_DIR/singbox.pid" 2>/dev/null || echo "未知")
-  配置文件: $CONFIG_DIR/config.json
-  日志文件: $LOG_DIR/singbox.log
-
-${BLUE}✨ 支持协议:${NC}
-  VMess, VLess, Trojan, Shadowsocks, AnyTLS, Hysteria2
-
-${GREEN}========================================${NC}
-
-EOF
+    echo ""
+    echo -e "${GREEN}========================================"
+    echo -e "🎉 sing-box 代理部署成功！"
+    echo -e "========================================${NC}"
+    echo ""
+    echo -e "${BLUE}📍 代理地址:${NC}"
+    echo "  Mixed:  127.0.0.1:$MIXED_PORT (推荐)"
+    echo "  SOCKS5: 127.0.0.1:$SOCKS_PORT"
+    echo "  HTTP:   127.0.0.1:$HTTP_PORT"
+    echo ""
+    echo -e "${BLUE}📝 使用方法:${NC}"
+    echo ""
+    echo "  设置系统环境变量即可使用代理:"
+    echo -e "  ${YELLOW}source $SCRIPT_DIR/proxy_env.sh${NC}"
+    echo ""
+    echo "  设置后，所有支持 HTTP/HTTPS/SOCKS5 代理的工具（git、pip、wget、curl 等）"
+    echo "  都会自动使用代理，无需额外配置。"
+    echo ""
+    echo -e "${BLUE}⚡ 快捷命令:${NC}"
+    echo -e "  ${YELLOW}proxy status${NC}      查看代理状态"
+    echo -e "  ${YELLOW}proxy on${NC}          启用代理环境变量"
+    echo -e "  ${YELLOW}proxy off${NC}         禁用代理环境变量"
+    echo -e "  ${YELLOW}proxy shutdown${NC}    关闭并清理代理"
+    echo ""
+    echo -e "  ${YELLOW}提示:${NC} 如果 proxy 命令不可用，请先运行:"
+    echo -e "  ${YELLOW}export PATH=\"\$HOME/bin:\$PATH\"${NC}"
+    echo ""
+    echo -e "${BLUE}🔧 管理命令:${NC}"
+    echo -e "  停止代理: ${YELLOW}$SCRIPT_DIR/stop.sh${NC}"
+    echo -e "  查看日志: ${YELLOW}tail -f $LOG_DIR/singbox.log${NC}"
+    echo ""
+    echo -e "${BLUE}📊 服务状态:${NC}"
+    echo "  sing-box PID: $(cat "$SCRIPT_DIR/singbox.pid" 2>/dev/null || echo "未知")"
+    echo "  配置文件: $CONFIG_DIR/config.json"
+    echo "  日志文件: $LOG_DIR/singbox.log"
+    echo ""
+    echo -e "${BLUE}✨ 支持协议:${NC}"
+    echo "  VMess, VLess, Trojan, Shadowsocks, AnyTLS, Hysteria2"
+    echo ""
+    echo -e "${GREEN}========================================${NC}"
+    echo ""
 }
 
 # 主函数
