@@ -5,9 +5,9 @@
 # 用法: proxy [on|off|shutdown|status]
 #================================================================
 
-# 自动检测脚本所在目录
-SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
-PROXY_DIR="$(dirname "$SCRIPT_DIR")"
+# 自动检测脚本所在目录（proxy-cli.sh 就在项目根目录）
+SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
+PROXY_DIR="$(dirname "$SCRIPT_PATH")"
 SINGBOX_BIN="$PROXY_DIR/sing-box/sing-box"
 CONFIG_FILE="$PROXY_DIR/config/config.json"
 PID_FILE="$PROXY_DIR/singbox.pid"
