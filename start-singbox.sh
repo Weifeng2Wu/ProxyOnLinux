@@ -252,12 +252,18 @@ install_singbox() {
     )
 
     for DOWNLOAD_URL in "${DOWNLOAD_SOURCES[@]}"; do
-        log_info "尝试下载: $(echo $DOWNLOAD_URL | grep -oP 'https://[^/]+')"
+        mirror=$(echo "$DOWNLOAD_URL" | grep -oP 'https://[^/]+' | head -1)
+        log_info "尝试下载: $mirror"
 
-        if timeout 40 wget --timeout=10 --tries=1 -O sing-box.tar.gz "$DOWNLOAD_URL" 2>&1 | grep -q "saved"; then
-            DOWNLOAD_SUCCESS=true
-            log_success "下载成功"
-            break
+        if timeout 40 wget -q --timeout=10 --tries=1 --show-progress -O sing-box.tar.gz "$DOWNLOAD_URL" 2>&1; then
+            # 检查文件是否成功下载且大小正常
+            if [ -f "sing-box.tar.gz" ] && [ $(stat -c%s "sing-box.tar.gz" 2>/dev/null || echo 0) -gt 1000000 ]; then
+                DOWNLOAD_SUCCESS=true
+                log_success "下载成功"
+                break
+            else
+                rm -f sing-box.tar.gz
+            fi
         fi
     done
 
