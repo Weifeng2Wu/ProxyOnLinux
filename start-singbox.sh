@@ -211,7 +211,7 @@ install_singbox() {
             RELEASE_URL="${PROXY}https://api.github.com/repos/SagerNet/sing-box/releases/latest"
         fi
 
-        VERSION=$(curl -sL --connect-timeout 10 --max-time 20 "$RELEASE_URL" 2>&1 | jq -r '.tag_name' 2>/dev/null)
+        VERSION=$(timeout 8 curl -sL --connect-timeout 3 --max-time 8 "$RELEASE_URL" 2>&1 | jq -r '.tag_name' 2>/dev/null)
         if [ -n "$VERSION" ] && [ "$VERSION" != "null" ]; then
             GITHUB_PROXY="$PROXY"
             log_success "成功获取版本信息: $VERSION"
@@ -242,7 +242,7 @@ install_singbox() {
     for DOWNLOAD_URL in "${DOWNLOAD_SOURCES[@]}"; do
         log_info "尝试下载: $(echo $DOWNLOAD_URL | grep -oP 'https://[^/]+')"
 
-        if wget --timeout=30 --tries=2 -O sing-box.tar.gz "$DOWNLOAD_URL" 2>/dev/null; then
+        if timeout 40 wget --timeout=10 --tries=1 -O sing-box.tar.gz "$DOWNLOAD_URL" 2>&1 | grep -q "saved"; then
             DOWNLOAD_SUCCESS=true
             log_success "下载成功"
             break
