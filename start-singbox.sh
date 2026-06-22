@@ -198,7 +198,7 @@ install_singbox() {
         ""  # 直连作为最后备选
     )
 
-    # 获取最新版本
+    # 获取最新版本（带超时和重试）
     log_info "获取 sing-box 最新版本..."
     VERSION=""
     for PROXY in "${GITHUB_PROXIES[@]}"; do
@@ -218,9 +218,11 @@ install_singbox() {
         fi
     done
 
+    # 如果所有方法都失败，使用固定版本
     if [ -z "$VERSION" ] || [ "$VERSION" = "null" ]; then
-        log_error "无法获取 sing-box 版本信息"
-        exit 1
+        VERSION="v1.10.0"
+        log_warn "无法获取最新版本，使用固定版本: $VERSION"
+        GITHUB_PROXY="https://ghp.ci/"
     fi
 
     # 下载sing-box
