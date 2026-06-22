@@ -193,8 +193,9 @@ install_singbox() {
     declare -a GITHUB_PROXIES=(
         "https://ghp.ci/"
         "https://mirror.ghproxy.com/"
-        "https://gh-proxy.org/"
+        "https://gh.api.99988866.xyz/"
         "https://ghproxy.net/"
+        "https://gh-proxy.org/"
         ""  # 直连作为最后备选
     )
 
@@ -225,18 +226,22 @@ install_singbox() {
         GITHUB_PROXY="https://ghp.ci/"
     fi
 
-    # 下载sing-box
+    # 下载sing-box（添加更多备用下载源）
     cd "$SINGBOX_DIR"
     DOWNLOAD_SUCCESS=false
 
-    for PROXY in "${GITHUB_PROXIES[@]}"; do
-        if [ -z "$PROXY" ]; then
-            log_info "尝试直连下载..."
-            DOWNLOAD_URL="https://github.com/SagerNet/sing-box/releases/download/${VERSION}/sing-box-${VERSION#v}-linux-${SINGBOX_ARCH}.tar.gz"
-        else
-            log_info "尝试下载: $PROXY"
-            DOWNLOAD_URL="${PROXY}https://github.com/SagerNet/sing-box/releases/download/${VERSION}/sing-box-${VERSION#v}-linux-${SINGBOX_ARCH}.tar.gz"
-        fi
+    # 定义下载源（包括 jsdelivr CDN）
+    declare -a DOWNLOAD_SOURCES=(
+        "https://edgeone.gh-proxy.org/https://github.com/SagerNet/sing-box/releases/download/${VERSION}/sing-box-${VERSION#v}-linux-${SINGBOX_ARCH}.tar.gz"
+        "https://ghp.ci/https://github.com/SagerNet/sing-box/releases/download/${VERSION}/sing-box-${VERSION#v}-linux-${SINGBOX_ARCH}.tar.gz"
+        "https://mirror.ghproxy.com/https://github.com/SagerNet/sing-box/releases/download/${VERSION}/sing-box-${VERSION#v}-linux-${SINGBOX_ARCH}.tar.gz"
+        "https://ghproxy.net/https://github.com/SagerNet/sing-box/releases/download/${VERSION}/sing-box-${VERSION#v}-linux-${SINGBOX_ARCH}.tar.gz"
+        "https://gh-proxy.org/https://github.com/SagerNet/sing-box/releases/download/${VERSION}/sing-box-${VERSION#v}-linux-${SINGBOX_ARCH}.tar.gz"
+        "https://github.com/SagerNet/sing-box/releases/download/${VERSION}/sing-box-${VERSION#v}-linux-${SINGBOX_ARCH}.tar.gz"
+    )
+
+    for DOWNLOAD_URL in "${DOWNLOAD_SOURCES[@]}"; do
+        log_info "尝试下载: $(echo $DOWNLOAD_URL | grep -oP 'https://[^/]+')"
 
         if wget --timeout=30 --tries=2 -O sing-box.tar.gz "$DOWNLOAD_URL" 2>/dev/null; then
             DOWNLOAD_SUCCESS=true
