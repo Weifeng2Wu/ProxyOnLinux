@@ -204,14 +204,14 @@ install_singbox() {
     VERSION=""
     for PROXY in "${GITHUB_PROXIES[@]}"; do
         if [ -z "$PROXY" ]; then
-            log_info "尝试直连 GitHub..."
+            log_info "尝试直连 GitHub API..."
             RELEASE_URL="https://api.github.com/repos/SagerNet/sing-box/releases/latest"
         else
             log_info "尝试镜像: $PROXY"
             RELEASE_URL="${PROXY}https://api.github.com/repos/SagerNet/sing-box/releases/latest"
         fi
 
-        VERSION=$(curl -sL --connect-timeout 10 --max-time 20 "$RELEASE_URL" | jq -r '.tag_name' 2>/dev/null)
+        VERSION=$(curl -sL --connect-timeout 10 --max-time 20 "$RELEASE_URL" 2>&1 | jq -r '.tag_name' 2>/dev/null)
         if [ -n "$VERSION" ] && [ "$VERSION" != "null" ]; then
             GITHUB_PROXY="$PROXY"
             log_success "成功获取版本信息: $VERSION"
@@ -223,7 +223,6 @@ install_singbox() {
     if [ -z "$VERSION" ] || [ "$VERSION" = "null" ]; then
         VERSION="v1.10.0"
         log_warn "无法获取最新版本，使用固定版本: $VERSION"
-        GITHUB_PROXY="https://ghp.ci/"
     fi
 
     # 下载sing-box（添加更多备用下载源）
