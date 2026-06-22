@@ -1,0 +1,23 @@
+# 运行时文件
+*.pid
+*.log
+logs/
+config/config.json
+config/temp_node_*.json
+config/result_*.txt
+config/subscription.txt
+config/nodes.txt
+config/test_*.json
+config/manual_test.json
+
+# sing-box 二进制文件
+sing-box/sing-box
+sing-box/*.tar.gz
+
+# 环境变量文件（包含敏感信息）
+proxy_env.sh
+
+# 临时文件
+*.tmp
+*.swp
+*~

@@ -1,0 +1,1 @@
+anytls://5c5ae198-56dc-44f2-8bd8-ceb9d7ad9032@node9929.dns.yingsheng.xin:16002?sni=hk01.idcddns.org&insecure=1#%E5%89%A9%E4%BD%99%E6%B5%81%E9%87%8F%EF%BC%9A59.26%20GB
