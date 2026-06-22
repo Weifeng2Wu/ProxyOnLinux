@@ -814,6 +814,9 @@ ${BLUE}⚡ 快捷命令:${NC}
   ${YELLOW}proxy off${NC}         禁用代理环境变量
   ${YELLOW}proxy shutdown${NC}    关闭并清理代理
 
+  ${YELLOW}提示:${NC} 如果 proxy 命令不可用，请先运行:
+  ${YELLOW}export PATH="\$HOME/bin:\$PATH"${NC}
+
 ${BLUE}🔧 管理命令:${NC}
   停止代理: ${YELLOW}$SCRIPT_DIR/stop.sh${NC}
   查看日志: ${YELLOW}tail -f $LOG_DIR/singbox.log${NC}
@@ -864,9 +867,17 @@ EOF
     ln -sf "$SCRIPT_DIR/proxy-cli.sh" ~/bin/proxy 2>/dev/null
     if ! grep -q 'export PATH="$HOME/bin:$PATH"' ~/.bashrc 2>/dev/null; then
         echo 'export PATH="$HOME/bin:$PATH"' >> ~/.bashrc
+        log_warn "已添加 ~/bin 到 PATH，请运行: source ~/.bashrc"
     fi
     export PATH="$HOME/bin:$PATH"
-    log_success "快捷命令已安装: proxy"
+
+    # 测试命令是否可用
+    if command -v proxy &> /dev/null; then
+        log_success "快捷命令已安装: proxy"
+    else
+        log_warn "快捷命令已安装，但需要重新加载环境变量"
+        log_info "运行: export PATH=\"\$HOME/bin:\$PATH\" 或 source ~/.bashrc"
+    fi
 
     show_usage
 
