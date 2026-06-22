@@ -7,7 +7,8 @@
 # 支持协议: VMess、VLess、Trojan、Shadowsocks、AnyTLS、Hysteria2
 #================================================================
 
-set -e
+# 不使用 set -e，手动处理错误
+set -o pipefail
 
 # 颜色定义
 RED='\033[0;31m'
@@ -202,24 +203,35 @@ install_singbox() {
     # 获取最新版本（带超时和重试）
     log_info "获取 sing-box 最新版本..."
     VERSION=""
-    for PROXY in "${GITHUB_PROXIES[@]}"; do
-        if [ -z "$PROXY" ]; then
-            log_info "尝试直连 GitHub API..."
-            RELEASE_URL="https://api.github.com/repos/SagerNet/sing-box/releases/latest"
-        else
-            log_info "尝试镜像: $PROXY"
-            RELEASE_URL="${PROXY}https://api.github.com/repos/SagerNet/sing-box/releases/latest"
-        fi
 
-        VERSION=$(timeout 8 curl -sL --connect-timeout 3 --max-time 8 "$RELEASE_URL" 2>&1 | jq -r '.tag_name' 2>/dev/null)
-        if [ -n "$VERSION" ] && [ "$VERSION" != "null" ]; then
-            GITHUB_PROXY="$PROXY"
-            log_success "成功获取版本信息: $VERSION"
-            break
-        fi
-    done
+    # 优先尝试 edgeone（已验证在中国可用）
+    log_info "尝试镜像: https://edgeone.gh-proxy.org/"
+    VERSION=$(timeout 8 curl -sL --connect-timeout 3 --max-time 8 \
+        "https://edgeone.gh-proxy.org/https://api.github.com/repos/SagerNet/sing-box/releases/latest" 2>&1 \
+        | jq -r '.tag_name' 2>/dev/null)
 
-    # 如果所有方法都失败，使用固定版本
+    if [ -n "$VERSION" ] && [ "$VERSION" != "null" ]; then
+        log_success "成功获取最新版本: $VERSION"
+    else
+        # 回退尝试其他镜像
+        for PROXY in "${GITHUB_PROXIES[@]}"; do
+            if [ -z "$PROXY" ]; then
+                log_info "尝试直连 GitHub API..."
+                RELEASE_URL="https://api.github.com/repos/SagerNet/sing-box/releases/latest"
+            else
+                log_info "尝试镜像: $PROXY"
+                RELEASE_URL="${PROXY}https://api.github.com/repos/SagerNet/sing-box/releases/latest"
+            fi
+
+            VERSION=$(timeout 8 curl -sL --connect-timeout 3 --max-time 8 "$RELEASE_URL" 2>&1 | jq -r '.tag_name' 2>/dev/null)
+            if [ -n "$VERSION" ] && [ "$VERSION" != "null" ]; then
+                log_success "成功获取版本信息: $VERSION"
+                break
+            fi
+        done
+    fi
+
+    # 如果所有方法都失败，使用固定版本作为最后备选
     if [ -z "$VERSION" ] || [ "$VERSION" = "null" ]; then
         VERSION="v1.10.0"
         log_warn "无法获取最新版本，使用固定版本: $VERSION"
